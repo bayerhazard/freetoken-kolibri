@@ -38,6 +38,10 @@ jobs:
           file: Dockerfile
           push: true
           platforms: linux/amd64
+          # No provenance/SBOM attestations: the Olares image downloader chokes on
+          # the extra unknown/unknown manifest in the OCI index (PROTOCOL_ERROR).
+          provenance: false
+          sbom: false
           tags: |
             ghcr.io/bayerhazard/freetoken-kolibri:${{ inputs.tag }}
             ghcr.io/bayerhazard/freetoken-kolibri:latest
