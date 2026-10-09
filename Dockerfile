@@ -13,6 +13,7 @@ COPY patch_register.py /tmp/patch_register.py
 
 RUN set -eux; \
     SP="$(python -c "import sysconfig; print(sysconfig.get_paths()['purelib'])")"; \
+    rm -rf "$SP/freetoken/models/kolibri"; \
     cp -r /tmp/kolibri "$SP/freetoken/models/kolibri"; \
     python /tmp/patch_register.py; \
     python -c "import ast,sysconfig,os; p=os.path.join(sysconfig.get_paths()['purelib'],'freetoken/models/register.py'); ast.parse(open(p).read()); print('register.py parses')"
