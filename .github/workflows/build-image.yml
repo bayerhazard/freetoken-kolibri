@@ -1,0 +1,45 @@
+name: Build freetoken-kolibri image
+
+# Thin derivative of the official FreeToken CUDA serving runtime plus the Kolibri-1
+# model module. Builds on GitHub-hosted runners (the Olares pod cannot build images:
+# nested overlayfs is unsupported) and pushes to ghcr.io.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Image tag"
+        required: false
+        default: "0.1.3-kolibri"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            ghcr.io/bayerhazard/freetoken-kolibri:${{ inputs.tag }}
+            ghcr.io/bayerhazard/freetoken-kolibri:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
