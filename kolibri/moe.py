@@ -51,10 +51,10 @@ class Kolibri1SparseBlock(BaseOP):
 
     def _route(self, hidden_states: torch.Tensor) -> TopK:
         logits = F.linear(hidden_states.float(), self.gate.weight.float())
-        scores = logits.sigmoid()
-        scores_for_choice = scores + self.e_score_correction_bias.float()
+        # Selection on raw logits + correction bias; weights from unbiased sigmoid(logits).
+        scores_for_choice = logits + self.e_score_correction_bias.float()
         _, topk_ids = torch.topk(scores_for_choice, self.top_k, dim=-1)
-        topk_weights = scores.gather(-1, topk_ids)
+        topk_weights = torch.sigmoid(logits.gather(-1, topk_ids))
         if self.norm_topk_prob:
             topk_weights = topk_weights / (topk_weights.sum(dim=-1, keepdim=True) + 1e-20)
         return topk_weights.to(torch.float32).contiguous(), topk_ids.to(torch.int32).contiguous()
