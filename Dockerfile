@@ -2,7 +2,9 @@
 # (beclab/leamon2code-freetoken) that adds the Kolibri-1 model module.
 # The base image already ships the full accel stack (torch cu13, flashinfer,
 # sgl-kernel, FreeToken in /opt/venv), so this build is only two layers.
-FROM beclab/leamon2code-freetoken:0.1.3-cu132
+# Mirror of beclab/leamon2code-freetoken:0.1.3-cu132 on ghcr (Docker Hub rate-limits
+# anonymous CI pulls with 429). Copied registry-to-registry with crane.
+FROM ghcr.io/bayerhazard/leamon2code-freetoken:0.1.3-cu132
 
 # The base image runs as UID 1000 and site-packages is root-owned; patch as root.
 USER root

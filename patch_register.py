@@ -15,7 +15,7 @@ ENTRY = (
     '    "Kolibri1ForCausalLM": ModelSpec(\n'
     '        "freetoken.models.kolibri",\n'
     '        "Kolibri1ForCausalLM",\n'
-    "        packed_modules_mapping=_DENSE_PACKED + _EXPERTS_PACKED,\n"
+    "        packed_modules_mapping=((\"qkv_proj\", (\"q_proj\", \"k_proj\", \"v_proj\")),),\n"
     "    ),\n"
 )
 
